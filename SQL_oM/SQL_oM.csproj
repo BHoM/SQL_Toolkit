@@ -35,7 +35,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\ProgramData\BHoM\Assemblies\Adapter_oM.dll</HintPath>
     </Reference>
-    <Reference Include="BHoM" />
+    <Reference Include="BHoM">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\BHoM\Assemblies\BHoM.dll</HintPath>
+    </Reference>
     <Reference Include="Data_oM">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\ProgramData\BHoM\Assemblies\Data_oM.dll</HintPath>
