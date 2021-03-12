@@ -72,7 +72,7 @@ namespace BH.Adapter.SQL
             using (SqlConnection connection = new SqlConnection(m_ConnectionString))
             {
                 connection.Open();
-                InsertObjects(connection, table, objects);
+                result = InsertObjects(connection, table, objects);
                 connection.Close();
             }
 
@@ -132,7 +132,7 @@ namespace BH.Adapter.SQL
 
         /***************************************************/
 
-        private bool InsertObjects(SqlConnection connection, string table, IEnumerable<object> data)
+        private List<object> InsertObjects(SqlConnection connection, string table, IEnumerable<object> data)
         {
             // Get the schema for the table
             DataTable dataTable = new DataTable();
@@ -150,6 +150,7 @@ namespace BH.Adapter.SQL
                 columns.Add(dataTable.Columns[i].ColumnName);
 
             // Add the data to push as rows in the table
+            List<object> addedData = new List<object>();
             foreach (object item in data)
             {
                 Dictionary<string, object> properties = item.PropertyDictionary();
@@ -161,6 +162,7 @@ namespace BH.Adapter.SQL
                         row[column] = properties[column];
                 }
                 dataTable.Rows.Add(row);
+                addedData.Add(item);
             }
 
             // Push the table in one bulk insert
@@ -170,7 +172,7 @@ namespace BH.Adapter.SQL
                 bulk.WriteToServer(dataTable);
             }
 
-            return true;
+            return addedData;
         }
 
         /***************************************************/
