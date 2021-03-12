@@ -36,7 +36,7 @@ namespace BH.Engine.SQL
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static object FromDictionary(Dictionary<string, object> dic, Type type = null)
+        public static object FromDictionary(this Dictionary<string, object> dic, Type type = null)
         {
             if (type == null && dic.ContainsKey("_t"))
                 type = BH.Engine.Reflection.Create.Type(dic["_t"] as string);
