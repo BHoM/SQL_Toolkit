@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
 using BH.oM.Base;
 using System;
 using System.Collections.Generic;
@@ -47,13 +48,14 @@ namespace BH.Engine.SQL
             object instance = Activator.CreateInstance(type);
             foreach (var kvp in dic)
             {
-                PropertyInfo prop = type.GetProperty(kvp.Key);
-                if (prop != null)
-                    prop.SetValue(instance, kvp.Value);
-                else if (instance is BHoMObject)
-                    ((BHoMObject)instance).CustomData[kvp.Key] = kvp.Value;
+                try
+                {
+                    if (kvp.Key != "id")
+                        instance.SetPropertyValue(kvp.Key, kvp.Value);
+                }
+                catch { }
             }
-
+                
             return instance;
         }
 
