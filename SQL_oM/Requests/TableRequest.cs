@@ -23,6 +23,7 @@
 using BH.oM.Adapter;
 using BH.oM.Data.Requests;
 using System;
+using System.Collections.Generic;
 
 namespace BH.oM.Adapters.SQL
 {
@@ -34,7 +35,9 @@ namespace BH.oM.Adapters.SQL
 
         public virtual string Table { get; set; } = "";
 
-        public virtual string Filter { get; set; } = "*";
+        public virtual List<string> Columns { get; set; } = new List<string>();
+
+        public virtual string Filter { get; set; } = "";
 
         public virtual Type DataType { get; set; } = null;
 
