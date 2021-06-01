@@ -168,8 +168,16 @@ namespace BH.Adapter.SQL
             // Push the table in one bulk insert
             using (SqlBulkCopy bulk = new SqlBulkCopy(connection))
             {
-                bulk.DestinationTableName = table;
-                bulk.WriteToServer(dataTable);
+                try
+                {
+                    bulk.DestinationTableName = table;
+                    bulk.WriteToServer(dataTable);
+                }
+                catch (Exception e)
+                {
+                    addedData.Clear();
+                    BH.Engine.Reflection.Compute.RecordError("Failed to push the data into the database. Error:\n" + e.Message);
+                }
             }
 
             return addedData;
