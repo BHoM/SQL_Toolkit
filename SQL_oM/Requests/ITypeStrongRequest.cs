@@ -26,13 +26,13 @@ using System;
 
 namespace BH.oM.Adapters.SQL
 {
-    public interface ISingleTableRequest
+    public interface ITypeStrongRequest
     {
         /***************************************************/
         /**** Properties                                ****/
         /***************************************************/
 
-        string Table { get; set; }
+        Type DataType { get; set; }
 
         /***************************************************/
     }

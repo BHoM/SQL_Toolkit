@@ -35,11 +35,6 @@ namespace BH.Adapter.SQL
         /**** Constructors                              ****/
         /***************************************************/
 
-
-        /***************************************************/
-        /**** Public Methods                            ****/
-        /***************************************************/
-
         public SqlAdapter(string server, string database)
         {
             m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True;";
@@ -52,6 +47,16 @@ namespace BH.Adapter.SQL
         {
             m_ConnectionString = connectionString;
             Initialise();
+        }
+
+
+        /***************************************************/
+        /**** Public Methods                            ****/
+        /***************************************************/
+
+        public List<string> GetMatchingTables(Type type)
+        {
+            return m_TableTypes.Where(x => x.Value == type).Select(x => x.Key).ToList();
         }
 
 

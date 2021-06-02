@@ -50,7 +50,15 @@ namespace BH.Engine.SQL
 
         public static string ToCommand(this TableRequest request)
         {
-            return $"SELECT {request.Filter} FROM {request.Table}";
+            string select = "*";
+            if (request.Columns != null && request.Columns.Count > 0)
+                select = request.Columns.Aggregate((a, b) => a + ", " + b);
+
+            string where = "";
+            if (!string.IsNullOrWhiteSpace(request.Filter))
+                where = "WHERE " + request.Filter;
+
+            return $"SELECT {select} FROM {request.Table} {where}";
         }
 
         /***************************************************/
