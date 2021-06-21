@@ -20,12 +20,10 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.oM.Adapters.SQL;
+using BH.Engine.Reflection;
 using BH.oM.Base;
-using BH.oM.Data.Requests;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -33,44 +31,42 @@ using System.Threading.Tasks;
 
 namespace BH.Engine.SQL
 {
-    public static partial class Convert 
+    public static partial class Compute 
     {
         /***************************************************/
         /**** Public Methods                            ****/
         /***************************************************/
 
-        public static string ToSqlTypeString(this Type type)
+        public static string NewTableCommand(this Type objectType, string tableName = "")
         {
-            // TODO: This is just prototype code for when we enable creation of tables from the adapter
-            switch (type.Name)
+            if (objectType == null)
+                return "";
+
+            // Set the table name to the object type name if not provided by the user
+            if (string.IsNullOrWhiteSpace(tableName))
+                tableName = objectType.Name;
+
+            // Collect the valid properties
+            Dictionary<string, Type> properties = objectType.GetProperties()
+                .Where(x => x.CanRead && x.GetMethod.GetParameters().Count() == 0)
+                .ToDictionary(x => x.Name, x => x.PropertyType);
+
+            // Collect the valid columns for the SQL table
+            Dictionary<string, Type> columns = new Dictionary<string, Type>();
+            foreach (var prop in properties)
             {
-                case "Boolean":
-                    return "bit";
-                case "Int16":
-                case "UInt16":
-                case "Int32":
-                case "UInt32":
-                case "Int64":
-                case "UInt64":
-                    return "bigint";
-                case "Char":
-                    return "char";
-                case "Single":
-                case "Double":
-                    return "float";
-                case "String":
-                    return "varchar(255)";
-                case "Guid":
-                    return SqlDbType.UniqueIdentifier.ToString();
-                case "DateTime":
-                    return "datetime";
-                default:
-                    if (type.IsEnum)
-                        return "varchar(100)";
-                    else
-                        return SqlDbType.Variant.ToString();
+                Type propertyType = prop.Value;
+                if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(Guid) || propertyType == typeof(DateTime))
+                    columns.Add(prop.Key, propertyType);
+                else
+                    Engine.Reflection.Compute.RecordWarning($"Property {prop.Key} was not added to the table as it is not a primitive type, an enum, a string, a date, or a Guid.");
             }
 
+            // Create the SQL command to generate the new table
+            return $"CREATE TABLE {tableName} ("
+                    + "\n\t[id] int IDENTITY(1,1) NOT NULL PRIMARY KEY,"
+                    + columns.Select(x => $"\n\t[{x.Key}] {x.Value.ToSqlTypeString()}").Aggregate((a, b) => a + "," + b)
+                    + "\n)";
         }
 
         /***************************************************/
