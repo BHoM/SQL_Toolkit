@@ -39,7 +39,7 @@ namespace BH.Engine.SQL
 
         public static object FromDictionary(this Dictionary<string, object> dic, Type type = null)
         {
-            if (type == null && dic.ContainsKey("_t"))
+            if ((type == null || type.IsAbstract) && dic.ContainsKey("_t"))
                 type = BH.Engine.Reflection.Create.Type(dic["_t"] as string);
 
             if (type == null)
@@ -50,7 +50,7 @@ namespace BH.Engine.SQL
             {
                 try
                 {
-                    if (kvp.Key != "id")
+                    if (instance is BHoMObject || !kvp.Key.StartsWith("_"))
                         instance.SetPropertyValue(kvp.Key, kvp.Value);
                 }
                 catch { }

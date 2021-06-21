@@ -31,6 +31,7 @@ using BH.oM.Adapters.SQL;
 using BH.Engine.Reflection;
 using BH.Engine.SQL;
 using System.Data;
+using System.Reflection;
 
 namespace BH.Adapter.SQL
 {
@@ -96,11 +97,11 @@ namespace BH.Adapter.SQL
             {
                 if (m_TableTypes.ContainsKey(table))
                 {
-                    if (objectType == m_TableTypes[table])
+                    if (m_TableTypes[table].Contains(objectType))
                         return table;
                     else
                     {
-                        string message = $"Table {table} expects objects of type {m_TableTypes[table].ToString()}."
+                        string message = $"Table {table} expects objects of type {m_TableTypes[table].Select(x => x.ToString()).Aggregate((a,b) => a + " or " + b)}."
                             + "\nThis doesn't match the type of the objects to push ({objectType.ToString()}).";
                         Engine.Reflection.Compute.RecordError(message);
                         return null;
@@ -109,25 +110,8 @@ namespace BH.Adapter.SQL
                 else
                     return table;
             }
-
-            // Get possible table from 
-            List<string> tables = m_TableTypes.Where(x => x.Value == objectType).Select(x => x.Key).ToList();
-            if (tables.Count == 1)
-                return tables[0];
-            else if (tables.Count == 0)
-            {
-                string message = "The table to push the data to couldn't be infered from the action config or the type of objects pushed.\nPlease provide a PushConfig with a valid table name.";
-                Engine.Reflection.Compute.RecordError(message);
-                return null;
-            }
             else
-            {
-                string message = "The table name was not provided in the PushConfig. There are multiple tables registed for the type of objects you want to push so the operation was aborded."
-                    + "\nPlease provide a PushConfig with a valid table name. The existing tables for that type are "
-                    + tables.Aggregate((a, b) => a + ", " + b);
-                Engine.Reflection.Compute.RecordError(message);
-                return null;
-            }
+                return GetMatchingTable(objectType);
         }
 
         /***************************************************/
@@ -135,35 +119,10 @@ namespace BH.Adapter.SQL
         private List<object> InsertObjects(SqlConnection connection, string table, IEnumerable<object> data)
         {
             // Get the schema for the table
-            DataTable dataTable = new DataTable();
-            using (SqlCommand schemaCommand = connection.CreateCommand())
-            {
-                schemaCommand.CommandText = $"SELECT TOP 0 * FROM {table}";
-                SqlDataAdapter da = new SqlDataAdapter(schemaCommand);
-                da.Fill(dataTable);
-                da.Dispose();
-            }
-
-            // Collect the list of properties that need to be added to the table
-            List<string> columns = new List<string>();
-            for (int i = 0; i < dataTable.Columns.Count; i++)
-                columns.Add(dataTable.Columns[i].ColumnName);
+            DataTable dataTable = GetSchema(connection, table);
 
             // Add the data to push as rows in the table
-            List<object> addedData = new List<object>();
-            foreach (object item in data)
-            {
-                Dictionary<string, object> properties = item.PropertyDictionary();
-                DataRow row = dataTable.NewRow();
-
-                foreach (string column in columns)
-                {
-                    if (properties.ContainsKey(column))
-                        row[column] = properties[column];
-                }
-                dataTable.Rows.Add(row);
-                addedData.Add(item);
-            }
+            List<object> newRows = GetRowsToPush(data, dataTable);
 
             // Push the table in one bulk insert
             using (SqlBulkCopy bulk = new SqlBulkCopy(connection))
@@ -175,68 +134,68 @@ namespace BH.Adapter.SQL
                 }
                 catch (Exception e)
                 {
-                    addedData.Clear();
+                    newRows.Clear();
                     BH.Engine.Reflection.Compute.RecordError("Failed to push the data into the database. Error:\n" + e.Message);
                 }
             }
 
-            return addedData;
+            return newRows;
         }
 
         /***************************************************/
 
-        private List<string> CreateTable(SqlConnection connection, string table, Type objectType)
+        private DataTable GetSchema(SqlConnection connection, string table)
         {
-            if (objectType == null)
-                return new List<string>();
-
-            // Collect the valid properties
-            Dictionary<string, Type> properties = objectType.GetProperties()
-                .Where(x => x.CanRead && x.GetMethod.GetParameters().Count() == 0)
-                .ToDictionary(x => x.Name, x => x.PropertyType);
-
-            return CreateTable(connection, table, properties);
-        }
-
-        /***************************************************/
-
-        private List<string> CreateTable(SqlConnection connection, string table, CustomObject sampleObject)
-        {
-            if (sampleObject == null)
-                return new List<string>();
-
-            Dictionary<string, Type> properties = sampleObject.CustomData
-                .Where(x => x.Value != null)
-                .ToDictionary(x => x.Key, x => x.Value.GetType());
-
-            return CreateTable(connection, table, properties);
-        }
-
-        /***************************************************/
-
-        private List<string> CreateTable(SqlConnection connection, string table, Dictionary<string, Type> properties)
-        {
-            // Collect the valid properties
-            Dictionary<string, Type> columns = new Dictionary<string, Type>();
-            foreach (var prop in properties)
+            DataTable dataTable = new DataTable();
+            using (SqlCommand schemaCommand = connection.CreateCommand())
             {
-                Type propertyType = prop.Value;
-                if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(Guid) || propertyType == typeof(DateTime))
-                    columns.Add(prop.Key, propertyType);
-                else
-                    Engine.Reflection.Compute.RecordWarning($"Property {prop.Key} was not added to the table as it is not a primitive type, an enum, a string, a date, or a Guid.");
+                schemaCommand.CommandText = $"SELECT TOP 0 * FROM {table}";
+                SqlDataAdapter da = new SqlDataAdapter(schemaCommand);
+                da.Fill(dataTable);
+                da.Dispose();
             }
 
-            // Create the table in the database
-            using (SqlCommand command = connection.CreateCommand())
+            return dataTable;
+        }
+
+        /***************************************************/
+
+        private List<object> GetRowsToPush(IEnumerable<object> data, DataTable dataTable)
+        {
+            if (data.Count() == 0)
+                return new List<object>();
+
+            // Collect the list of properties that need to be added to the table
+            List<string> columns = new List<string>();
+            for (int i = 0; i < dataTable.Columns.Count; i++)
+                columns.Add(dataTable.Columns[i].ColumnName);
+
+            // Collect the properties of the objects
+            Dictionary<string, PropertyInfo> properties = data.First().GetType()
+                .GetProperties().Where(x => x.CanRead)
+                .ToDictionary(x => x.Name);
+
+            // Collect the rows to push
+            List<object> rows = new List<object>();
+            foreach (object item in data)
             {
-                command.CommandText = $"CREATE TABLE {table} ("
-                            + columns.Select(x => $"{x.Key} + {x.Value.ToSqlTypeString()}").Aggregate((a, b) => a + ", " + b)
-                            + ")";
-                command.ExecuteNonQuery();
+                Dictionary<string, object> customData = new Dictionary<string, object>();
+                if (item is BHoMObject)
+                    customData = ((BHoMObject)item).CustomData;
+
+                DataRow row = dataTable.NewRow();
+                foreach (string column in columns)
+                {
+                    if (properties.ContainsKey(column))
+                        row[column] = properties[column].GetValue(item);
+                    else if (customData.ContainsKey(column))
+                        row[column] = customData[column];
+                }
+                dataTable.Rows.Add(row);
+                rows.Add(item);
             }
 
-            return columns.Keys.ToList();
+            return rows;
         }
 
         /***************************************************/
