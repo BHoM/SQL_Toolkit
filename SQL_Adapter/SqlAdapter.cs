@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -56,7 +57,30 @@ namespace BH.Adapter.SQL
 
         public List<string> GetMatchingTables(Type type)
         {
-            return m_TableTypes.Where(x => x.Value == type).Select(x => x.Key).ToList();
+            return m_TableTypes.Where(x => x.Value.Contains(type)).Select(x => x.Key).ToList();
+        }
+
+        /***************************************************/
+
+        public string GetMatchingTable(Type type)
+        {
+            List<string> tables = GetMatchingTables(type);
+            if (tables.Count == 1)
+                return tables[0];
+            else if (tables.Count == 0)
+            {
+                string message = "There is no registered table for the type " + type.IToText();
+                Engine.Reflection.Compute.RecordError(message);
+                return null;
+            }
+            else
+            {
+                string message = $"There are multiple tables registed for the type {type.IToText()} so the operation was aborded."
+                    + "\nThe existing tables for that type are "
+                    + tables.Aggregate((a, b) => a + ", " + b);
+                Engine.Reflection.Compute.RecordError(message);
+                return null;
+            }
         }
 
 
@@ -104,7 +128,12 @@ namespace BH.Adapter.SQL
 
                     Type type = Engine.Reflection.Create.Type(typeName, true);
                     if (type != null)
-                        m_TableTypes[tableName] = type;
+                    {
+                        if (!m_TableTypes.ContainsKey(tableName))
+                            m_TableTypes[tableName] = new List<Type>();
+                        m_TableTypes[tableName].Add(type);
+                    }
+                        
                 }
                 reader.Close();
             }
@@ -148,7 +177,7 @@ namespace BH.Adapter.SQL
 
         private string m_ConnectionString = "";
 
-        private Dictionary<string, Type> m_TableTypes = new Dictionary<string, Type>();
+        private Dictionary<string, List<Type>> m_TableTypes = new Dictionary<string, List<Type>>();
 
         /***************************************************/
     }
