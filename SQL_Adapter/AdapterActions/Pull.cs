@@ -50,7 +50,7 @@ namespace BH.Adapter.SQL
 
                 using (SqlCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = query.IToCommand();
+                    command.CommandText = query.IToSqlCommand();
                     Type objectType = GetDataType(query);
 
                     SqlDataReader reader = command.ExecuteReader();
@@ -90,8 +90,8 @@ namespace BH.Adapter.SQL
             if (request is ISingleTableRequest)
             {
                 string table = ((ISingleTableRequest)request).Table;
-                if (m_TableTypes.ContainsKey(table))
-                    return m_TableTypes[table];
+                if (m_TableTypes.ContainsKey(table) && m_TableTypes[table].Count == 1)
+                    return m_TableTypes[table].First();
             }
 
             return null;
