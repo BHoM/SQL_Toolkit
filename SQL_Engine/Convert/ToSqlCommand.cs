@@ -20,6 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
 using BH.oM.Base;
 using BH.oM.Data.Requests;
@@ -38,17 +39,24 @@ namespace BH.Engine.SQL
         /**** Interface Methods                         ****/
         /***************************************************/
 
-        public static string IToCommand(this IRequest request)
+        public static string IToSqlCommand(this IRequest request)
         {
-            return ToCommand(request as dynamic);
+            return ToSqlCommand(request as dynamic);
+        }
+
+        /***************************************************/
+
+        public static string IToSqlCommand(this IExecuteCommand request)
+        {
+            return ToSqlCommand(request as dynamic);
         }
 
 
         /***************************************************/
-        /**** Public Methods                            ****/
+        /**** Request Methods                           ****/
         /***************************************************/
 
-        public static string ToCommand(this TableRequest request)
+        public static string ToSqlCommand(this TableRequest request)
         {
             string select = "*";
             if (request.Columns != null && request.Columns.Count > 0)
@@ -63,9 +71,34 @@ namespace BH.Engine.SQL
 
         /***************************************************/
 
-        public static string ToCommand(this oM.Adapters.SQL.CustomRequest request)
+        public static string ToSqlCommand(this oM.Adapters.SQL.CustomRequest request)
         {
             return request.Query;
+        }
+
+
+        /***************************************************/
+        /**** Command Methods                           ****/
+        /***************************************************/
+
+        public static string ToSqlCommand(this UpdateCommand command)
+        {
+            string where = "";
+            if (!string.IsNullOrWhiteSpace(command.Filter))
+                where = "WHERE " + command.Filter;
+
+            string changes = command.Changes.Select(x =>
+            {
+                string val = x.Value.ToString();
+                if (!x.Value.GetType().IsPrimitive)
+                    val = $"'{val}'";
+                else if (x.Value is bool)
+                    val = System.Convert.ToInt32(x.Value).ToString();
+
+                return $"{x.Key} = {val}";
+            }).Aggregate((a, b) => a + ", " + b);
+
+            return $"UPDATE {command.Table} SET {changes} {where}";
         }
 
 
@@ -73,7 +106,7 @@ namespace BH.Engine.SQL
         /**** Fallback Methods                          ****/
         /***************************************************/
 
-        private static string ToCommand(this object request)
+        private static string ToSqlCommand(this object request)
         {
             return "";
         }

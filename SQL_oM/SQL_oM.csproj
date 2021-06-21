@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Configs\PushConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Commands\UpdateCommand.cs" />
     <Compile Include="Requests\CustomRequest.cs" />
     <Compile Include="Requests\ITypeStrongRequest.cs" />
     <Compile Include="Requests\ISingleTableRequest.cs" />

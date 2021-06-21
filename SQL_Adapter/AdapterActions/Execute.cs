@@ -22,7 +22,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using BH.Engine.SQL;
 using BH.oM.Adapter;
+using BH.oM.Adapters.SQL;
 using BH.oM.Reflection;
 
 namespace BH.Adapter.SQL
@@ -35,10 +38,7 @@ namespace BH.Adapter.SQL
 
         public override Output<List<object>, bool> Execute(IExecuteCommand command, ActionConfig actionConfig = null)
         {
-            Output<List<object>, bool> result = new Output<List<object>, bool> { Item1 = null, Item2 = false };
-
-            Engine.Reflection.Compute.RecordError("Execute is not implemented yet for teh SQl adapter.");
-            return result;
+            return ExecuteCommand(command as dynamic, actionConfig);
         }
 
 
@@ -46,7 +46,50 @@ namespace BH.Adapter.SQL
         /****  Execute Methods                          ****/
         /***************************************************/
 
+        public Output<List<object>, bool> ExecuteCommand(UpdateCommand update, ActionConfig actionConfig = null)
+        {
+            Output<List<object>, bool> result = new Output<List<object>, bool> { Item1 = new List<object>(), Item2 = false };
 
+            if (update == null)
+                return result;
+
+            if (string.IsNullOrWhiteSpace(update.Table))
+                update.Table = GetMatchingTable(update.DataType);
+
+            using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    try
+                    {
+                        command.CommandText = update.IToSqlCommand();
+                        int nbSuccess = command.ExecuteNonQuery();
+
+                        result.Item2 = nbSuccess > 0;
+                    }
+                    catch (Exception e)
+                    {
+                        Engine.Reflection.Compute.RecordError(e.Message);
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        /***************************************************/
+
+        public Output<List<object>, bool> ExecuteCommand(IExecuteCommand command, ActionConfig actionConfig = null)
+        {
+            Output<List<object>, bool> result = new Output<List<object>, bool> { Item1 = new List<object>(), Item2 = false };
+
+            Engine.Reflection.Compute.RecordError("Execute is not implemented yet for the SQl adapter.");
+            return result;
+        }
 
         /***************************************************/
     }
