@@ -29,8 +29,18 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+using BH.oM.SQL;
+
 namespace BH.Engine.SQL
 {
+    public static partial class Create
+    {
+        public static DatabaseContextTest DatabaseContextTest(string connectionString)
+        {
+            return new DatabaseContextTest(connectionString);
+        }
+    }
+
     public static partial class Compute 
     {
         /***************************************************/

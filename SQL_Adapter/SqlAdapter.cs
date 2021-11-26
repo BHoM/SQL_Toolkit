@@ -28,6 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using BH.oM.SQL;
+using System.Data.Entity;
+
 namespace BH.Adapter.SQL
 {
     public partial class SqlAdapter : BHoMAdapter
@@ -48,6 +51,13 @@ namespace BH.Adapter.SQL
         {
             m_ConnectionString = connectionString;
             Initialise();
+        }
+
+        /***************************************************/
+
+        public SqlAdapter(IDatabaseContext context)
+        {
+            m_DatabaseContext = context as DbContext;
         }
 
 
@@ -178,6 +188,8 @@ namespace BH.Adapter.SQL
         private string m_ConnectionString = "";
 
         private Dictionary<string, List<Type>> m_TableTypes = new Dictionary<string, List<Type>>();
+
+        private DbContext m_DatabaseContext = null;
 
         /***************************************************/
     }

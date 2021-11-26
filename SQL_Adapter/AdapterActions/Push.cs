@@ -43,6 +43,9 @@ namespace BH.Adapter.SQL
 
         public override List<object> Push(IEnumerable<object> objects, string tag = "", PushType pushType = PushType.AdapterDefault, ActionConfig actionConfig = null)
         {
+            if (m_DatabaseContext != null)
+                return PushEntityFramework(objects, tag, pushType, actionConfig);
+
             List<object> result = new List<object>();
 
             if (objects == null)
