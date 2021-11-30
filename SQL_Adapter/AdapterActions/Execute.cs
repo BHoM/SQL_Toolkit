@@ -84,8 +84,11 @@ namespace BH.Adapter.SQL
 
             foreach(object o in upsert.ObjectsToUpsert)
             {
-                var propValue = primaryKeyProperty.GetValue(o);
-                if (propValue == primaryKeyValue)
+                var propValue = System.Convert.ChangeType(primaryKeyProperty.GetValue(o), upsert.PrimaryKeyType);
+                if (propValue == null)
+                    continue;
+
+                if (propValue.Equals(primaryKeyValue))
                     insertObjects.Add(o);
                 else
                     updateObjects.Add(o);
