@@ -28,6 +28,11 @@ using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
 using BH.oM.Reflection;
 
+using System.Linq;
+using System.Reflection;
+
+using System.Data;
+
 namespace BH.Adapter.SQL
 {
     public partial class SqlAdapter
@@ -45,6 +50,112 @@ namespace BH.Adapter.SQL
         /***************************************************/
         /****  Execute Methods                          ****/
         /***************************************************/
+
+        public Output<List<object>, bool> ExecuteCommand(UpsertCommand upsert, ActionConfig actionConfig = null)
+        {
+            Output<List<object>, bool> result = new Output<List<object>, bool> { Item1 = new List<object>(), Item2 = false };
+
+            if (upsert == null)
+                return result;
+
+            List<Type> objectTypes = upsert.ObjectsToUpsert.Select(x => x.GetType()).Distinct().ToList();
+            if (objectTypes.Count != 1)
+            {
+                string message = "The SQL adapter only allows to upsert objects of a single type to a table."
+                    + "\nRight now you are providing objects of the following types: "
+                    + objectTypes.Select(x => x.ToString()).Aggregate((a, b) => a + ", " + b);
+                Engine.Reflection.Compute.RecordError(message);
+                return result;
+            }
+
+            List<object> updateObjects = new List<object>();
+            List<object> insertObjects = new List<object>();
+
+            Type objectType = objectTypes[0];
+            List<PropertyInfo> objectProperties = new List<PropertyInfo>(objectType.GetProperties());
+            PropertyInfo primaryKeyProperty = objectProperties.Where(x => x.Name == upsert.PrimaryKey).FirstOrDefault();
+            if(primaryKeyProperty == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Primary key field {upsert.PrimaryKey} does not exist on objects of type {objectType.ToString()}");
+                return result;
+            }
+
+            foreach(object o in upsert.ObjectsToUpsert)
+            {
+                var propValue = primaryKeyProperty.GetValue(o);
+                if (propValue == upsert.DefaultPrimaryKeyValue)
+                    insertObjects.Add(o);
+                else
+                    updateObjects.Add(o);
+            }
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+                {
+                    connection.Open();
+                    result.Item1.AddRange(InsertObjects(connection, upsert.Table, insertObjects));
+                    connection.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Error in inserting {insertObjects.Count} items. Error was {ex.ToString()}");
+            }
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+                {
+                    // Get the schema for the table
+                    foreach(object o in updateObjects)
+                    {
+                        Dictionary<string, object> changes = Convert.ToDictionary(o);
+                        if (changes == null)
+                            continue;
+
+                        string where = upsert.PrimaryKey + "=" + changes[upsert.PrimaryKey].ToString();
+
+                        changes.Remove(upsert.PrimaryKey); //Don't update the primary key
+
+                        string changesToSet = changes.Select(x =>
+                        {
+                            string val = x.Value.ToString();
+                            if (!x.Value.GetType().IsPrimitive)
+                                val = $"'{val}'";
+                            else if (x.Value is bool)
+                                val = System.Convert.ToInt32(x.Value).ToString();
+
+                            return $"{x.Key} = {val}";
+                        }).Aggregate((a, b) => a + ", " + b);
+
+                        string commandString = $"UPDATE {upsert.Table} SET {changesToSet} WHERE {where}";
+
+                        try
+                        {
+                            using (SqlCommand command = connection.CreateCommand())
+                            {
+                                command.CommandText = commandString;
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            BH.Engine.Reflection.Compute.RecordError($"Error in updating item where {where}. Exception was {ex.ToString()}");
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Error in updating items. Error was {ex.ToString()}");
+                return result;
+            }
+
+            result.Item1.AddRange(updateObjects);
+            result.Item2 = true;
+            return result;
+        }
 
         public Output<List<object>, bool> ExecuteCommand(UpdateCommand update, ActionConfig actionConfig = null)
         {
