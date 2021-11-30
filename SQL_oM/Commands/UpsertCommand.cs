@@ -41,6 +41,9 @@ namespace BH.oM.Adapters.SQL
         [Description("Specify what the default value of your primary key is to determine whether data should be updated or inserted. E.G. if your primary key is 'ID' and is of type 'int', then specify 0 for objects which are new and need inserting.")]
         public virtual object DefaultPrimaryKeyValue { get; set; }
 
+        [Description("Set the type of the primary key value - used to ensure queried properties from objects to upsert match the right type and the DefaultPrimaryKeyValue is correctly casted to this type.")]
+        public virtual Type PrimaryKeyType { get; set; }
+
         [Description("List of objects which are to be upserted into the database. Objects must all be of a single type.")]
         public virtual List<object> ObjectsToUpsert { get; set; }
 
