@@ -80,10 +80,12 @@ namespace BH.Adapter.SQL
                 return result;
             }
 
+            var primaryKeyValue = System.Convert.ChangeType(upsert.DefaultPrimaryKeyValue, upsert.PrimaryKeyType);
+
             foreach(object o in upsert.ObjectsToUpsert)
             {
                 var propValue = primaryKeyProperty.GetValue(o);
-                if (propValue == upsert.DefaultPrimaryKeyValue)
+                if (propValue == primaryKeyValue)
                     insertObjects.Add(o);
                 else
                     updateObjects.Add(o);
