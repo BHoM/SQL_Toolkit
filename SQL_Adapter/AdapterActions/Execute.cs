@@ -107,7 +107,8 @@ namespace BH.Adapter.SQL
             {
                 using (SqlConnection connection = new SqlConnection(m_ConnectionString))
                 {
-                    // Get the schema for the table
+                    connection.Open();
+
                     foreach(object o in updateObjects)
                     {
                         Dictionary<string, object> changes = Convert.ToDictionary(o);
@@ -144,6 +145,8 @@ namespace BH.Adapter.SQL
                             BH.Engine.Reflection.Compute.RecordError($"Error in updating item where {where}. Exception was {ex.ToString()}");
                         }
                     }
+
+                    connection.Close();
                 }
             }
             catch(Exception ex)
