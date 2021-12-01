@@ -64,7 +64,6 @@
     <Compile Include="Requests\ITypeStrongRequest.cs" />
     <Compile Include="Requests\ISingleTableRequest.cs" />
     <Compile Include="Requests\TableRequest.cs" />
-    <Compile Include="TestPoint.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition="" />
   <PropertyGroup>
