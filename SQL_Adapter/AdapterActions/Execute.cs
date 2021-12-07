@@ -32,6 +32,7 @@ using System.Linq;
 using System.Reflection;
 
 using System.Data;
+using BH.Engine.Reflection;
 
 namespace BH.Adapter.SQL
 {
@@ -71,27 +72,21 @@ namespace BH.Adapter.SQL
             List<object> updateObjects = new List<object>();
             List<object> insertObjects = new List<object>();
 
-            Type objectType = objectTypes[0];
-            List<PropertyInfo> objectProperties = new List<PropertyInfo>(objectType.GetProperties());
-            PropertyInfo primaryKeyProperty = objectProperties.Where(x => x.Name == upsert.PrimaryKey).FirstOrDefault();
-            if(primaryKeyProperty == null)
-            {
-                BH.Engine.Reflection.Compute.RecordError($"Primary key field {upsert.PrimaryKey} does not exist on objects of type {objectType.ToString()}");
-                return result;
-            }
-
             var primaryKeyValue = System.Convert.ChangeType(upsert.DefaultPrimaryKeyValue, upsert.PrimaryKeyType);
 
             foreach(object o in upsert.ObjectsToUpsert)
             {
-                var propValue = System.Convert.ChangeType(primaryKeyProperty.GetValue(o), upsert.PrimaryKeyType);
-                if (propValue == null)
-                    continue;
-
-                if (propValue.Equals(primaryKeyValue))
+                var objValue = o.PropertyValue(upsert.PrimaryKey);
+                if (objValue == null)
                     insertObjects.Add(o);
                 else
-                    updateObjects.Add(o);
+                {
+                    var propValue = System.Convert.ChangeType(o.PropertyValue(upsert.PrimaryKey), upsert.PrimaryKeyType);
+                    if (propValue == null || propValue.Equals(primaryKeyValue))
+                        insertObjects.Add(o);
+                    else
+                        updateObjects.Add(o);
+                }
             }
 
             try
