@@ -6,22 +6,31 @@ using System.Threading.Tasks;
 
 using System.Reflection;
 
+using BH.oM.Base;
+
 namespace BH.Adapter.SQL
 {
     public static partial class Convert
     {
         public static Dictionary<string, object> ToDictionary(object o)
         {
-            List<PropertyInfo> objectProperties = new List<PropertyInfo>(o.GetType().GetProperties());
-            Dictionary<string, object> propertyVals = new Dictionary<string, object>();
-
-            foreach(var pi in objectProperties)
+            if (o is CustomObject)
             {
-                object val = pi.GetValue(o);
-                propertyVals.Add(pi.Name, val);
+                return (o as CustomObject).CustomData;
             }
+            else
+            {
+                List<PropertyInfo> objectProperties = new List<PropertyInfo>(o.GetType().GetProperties());
+                Dictionary<string, object> propertyVals = new Dictionary<string, object>();
 
-            return propertyVals;
+                foreach (var pi in objectProperties)
+                {
+                    object val = pi.GetValue(o);
+                    propertyVals.Add(pi.Name, val);
+                }
+
+                return propertyVals;
+            }
         }
     }
 }
