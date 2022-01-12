@@ -20,7 +20,6 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using BH.oM.Base;
 using System;
 using System.Collections.Generic;
@@ -28,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using BH.Engine.Base;
 
 namespace BH.Engine.SQL
 {
@@ -40,7 +40,7 @@ namespace BH.Engine.SQL
         public static object FromDictionary(this Dictionary<string, object> dic, Type type = null)
         {
             if ((type == null || type.IsAbstract) && dic.ContainsKey("_t"))
-                type = BH.Engine.Reflection.Create.Type(dic["_t"] as string);
+                type = BH.Engine.Base.Create.Type(dic["_t"] as string);
 
             if (type == null)
                 type = typeof(CustomObject);

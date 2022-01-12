@@ -28,7 +28,6 @@ using BH.oM.Data.Requests;
 using BH.oM.Adapter;
 using System.Data.SqlClient;
 using BH.oM.Adapters.SQL;
-using BH.Engine.Reflection;
 using BH.Engine.SQL;
 using System.Data;
 using System.Reflection;
@@ -59,7 +58,7 @@ namespace BH.Adapter.SQL
                 string message = "The SQL adapter only allows to push objects of a single type to a table."
                     + "\nRight now you are providing objects of the following types: "
                     + objectTypes.Select(x => x.ToString()).Aggregate((a, b) => a + ", " + b);
-                Engine.Reflection.Compute.RecordError(message);
+                Engine.Base.Compute.RecordError(message);
                 return result;
             }
             Type type = objectTypes[0];
@@ -103,7 +102,7 @@ namespace BH.Adapter.SQL
                     {
                         string message = $"Table {table} expects objects of type {m_TableTypes[table].Select(x => x.ToString()).Aggregate((a,b) => a + " or " + b)}."
                             + "\nThis doesn't match the type of the objects to push ({objectType.ToString()}).";
-                        Engine.Reflection.Compute.RecordError(message);
+                        Engine.Base.Compute.RecordError(message);
                         return null;
                     }
                 }
@@ -135,7 +134,7 @@ namespace BH.Adapter.SQL
                 catch (Exception e)
                 {
                     newRows.Clear();
-                    BH.Engine.Reflection.Compute.RecordError("Failed to push the data into the database. Error:\n" + e.Message);
+                    BH.Engine.Base.Compute.RecordError("Failed to push the data into the database. Error:\n" + e.Message);
                 }
             }
 

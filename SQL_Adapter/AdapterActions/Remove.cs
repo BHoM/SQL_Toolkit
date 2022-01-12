@@ -34,7 +34,7 @@ namespace BH.Adapter.SQL
 
         public override int Remove(IRequest filter, ActionConfig actionConfig = null)
         {
-            Engine.Reflection.Compute.RecordError("Remove is not implemented yet for the SQl adapter.");
+            Engine.Base.Compute.RecordError("Remove is not implemented yet for the SQl adapter.");
             return 0;
         }
 

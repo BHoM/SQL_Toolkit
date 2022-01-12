@@ -20,13 +20,13 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BH.Engine.Base;
 
 namespace BH.Adapter.SQL
 {
@@ -70,7 +70,7 @@ namespace BH.Adapter.SQL
             else if (tables.Count == 0)
             {
                 string message = "There is no registered table for the type " + type.IToText();
-                Engine.Reflection.Compute.RecordError(message);
+                Engine.Base.Compute.RecordError(message);
                 return null;
             }
             else
@@ -78,7 +78,7 @@ namespace BH.Adapter.SQL
                 string message = $"There are multiple tables registed for the type {type.IToText()} so the operation was aborded."
                     + "\nThe existing tables for that type are "
                     + tables.Aggregate((a, b) => a + ", " + b);
-                Engine.Reflection.Compute.RecordError(message);
+                Engine.Base.Compute.RecordError(message);
                 return null;
             }
         }
@@ -126,7 +126,7 @@ namespace BH.Adapter.SQL
                     if (string.IsNullOrWhiteSpace(tableName) || string.IsNullOrWhiteSpace(typeName))
                         continue;
 
-                    Type type = Engine.Reflection.Create.Type(typeName, true);
+                    Type type = Engine.Base.Create.Type(typeName, true);
                     if (type != null)
                     {
                         if (!m_TableTypes.ContainsKey(tableName))
