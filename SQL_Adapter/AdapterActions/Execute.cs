@@ -26,13 +26,13 @@ using System.Data.SqlClient;
 using BH.Engine.SQL;
 using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
-using BH.oM.Reflection;
 
 using System.Linq;
 using System.Reflection;
+using BH.oM.Base;
+using BH.Engine.Base;
 
 using System.Data;
-using BH.Engine.Reflection;
 
 namespace BH.Adapter.SQL
 {
@@ -65,7 +65,7 @@ namespace BH.Adapter.SQL
                 string message = "The SQL adapter only allows to upsert objects of a single type to a table."
                     + "\nRight now you are providing objects of the following types: "
                     + objectTypes.Select(x => x.ToString()).Aggregate((a, b) => a + ", " + b);
-                Engine.Reflection.Compute.RecordError(message);
+                Engine.Base.Compute.RecordError(message);
                 return result;
             }
 
@@ -100,7 +100,7 @@ namespace BH.Adapter.SQL
             }
             catch(Exception ex)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Error in inserting {insertObjects.Count} items. Error was {ex.ToString()}");
+                BH.Engine.Base.Compute.RecordError($"Error in inserting {insertObjects.Count} items. Error was {ex.ToString()}");
             }
 
             try
@@ -142,7 +142,7 @@ namespace BH.Adapter.SQL
                         }
                         catch(Exception ex)
                         {
-                            BH.Engine.Reflection.Compute.RecordError($"Error in updating item where {where}. Exception was {ex.ToString()}");
+                            BH.Engine.Base.Compute.RecordError($"Error in updating item where {where}. Exception was {ex.ToString()}");
                         }
                     }
 
@@ -151,7 +151,7 @@ namespace BH.Adapter.SQL
             }
             catch(Exception ex)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Error in updating items. Error was {ex.ToString()}");
+                BH.Engine.Base.Compute.RecordError($"Error in updating items. Error was {ex.ToString()}");
                 return result;
             }
 
@@ -185,7 +185,7 @@ namespace BH.Adapter.SQL
                     }
                     catch (Exception e)
                     {
-                        Engine.Reflection.Compute.RecordError(e.Message);
+                        Engine.Base.Compute.RecordError(e.Message);
                     }
                 }
 
@@ -201,7 +201,7 @@ namespace BH.Adapter.SQL
         {
             Output<List<object>, bool> result = new Output<List<object>, bool> { Item1 = new List<object>(), Item2 = false };
 
-            Engine.Reflection.Compute.RecordError("Execute is not implemented yet for the SQl adapter.");
+            Engine.Base.Compute.RecordError("Execute is not implemented yet for the SQl adapter.");
             return result;
         }
 

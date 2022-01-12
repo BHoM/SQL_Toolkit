@@ -20,7 +20,7 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
-using BH.Engine.Reflection;
+using BH.Engine.Base;
 using BH.oM.Base;
 using System;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace BH.Engine.SQL
                 if (propertyType.IsPrimitive || propertyType.IsEnum || propertyType == typeof(string) || propertyType == typeof(Guid) || propertyType == typeof(DateTime))
                     columns.Add(prop.Key, propertyType);
                 else
-                    Engine.Reflection.Compute.RecordWarning($"Property {prop.Key} was not added to the table as it is not a primitive type, an enum, a string, a date, or a Guid.");
+                    Engine.Base.Compute.RecordWarning($"Property {prop.Key} was not added to the table as it is not a primitive type, an enum, a string, a date, or a Guid.");
             }
 
             // Create the SQL command to generate the new table
