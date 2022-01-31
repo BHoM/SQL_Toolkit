@@ -185,10 +185,14 @@ namespace BH.Adapter.SQL
                 DataRow row = dataTable.NewRow();
                 foreach (string column in columns)
                 {
-                    if (properties.ContainsKey(column))
-                        row[column] = properties[column].GetValue(item);
-                    else if (customData.ContainsKey(column))
-                        row[column] = customData[column];
+                    try
+                    {
+                        if (properties.ContainsKey(column))
+                            row[column] = properties[column].GetValue(item);
+                        else if (customData.ContainsKey(column))
+                            row[column] = customData[column];
+                    }
+                    catch { }
                 }
                 dataTable.Rows.Add(row);
                 rows.Add(item);
