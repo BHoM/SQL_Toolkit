@@ -50,7 +50,7 @@ namespace BH.Engine.SQL
             {
                 try
                 {
-                    if (instance is BHoMObject || !kvp.Key.StartsWith("_"))
+                    if (instance is BHoMObject && !kvp.Key.StartsWith("_") && kvp.Value != null && !(kvp.Value is DBNull))
                         instance.SetPropertyValue(kvp.Key, kvp.Value);
                 }
                 catch { }
