@@ -50,8 +50,14 @@ namespace BH.Engine.SQL
             {
                 try
                 {
-                    if (instance is BHoMObject && !kvp.Key.StartsWith("_") && kvp.Value != null && !(kvp.Value is DBNull))
-                        instance.SetPropertyValue(kvp.Key, kvp.Value);
+                    if (kvp.Value != null && !(kvp.Value is DBNull))
+                    {
+                        if (kvp.Key.StartsWith("_") && instance is BHoMObject)
+                            ((BHoMObject)instance).CustomData[kvp.Key] = kvp.Value;
+                        else
+                            instance.SetPropertyValue(kvp.Key, kvp.Value);
+                    }
+                    
                 }
                 catch { }
             }
