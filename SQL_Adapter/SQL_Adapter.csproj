@@ -5,14 +5,7 @@
     <Description>https://github.com/BHoM/SQL_Toolkit</Description>
     <FileVersion>6.1.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
-    <Authors>BHoM</Authors>
-    <Copyright>Copyright © https://github.com/BHoM</Copyright>
-    <RootNamespace>BH.Adapter.SQL</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <OutputPath>..\Build\</OutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,9 +44,5 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot;  &quot;C:\ProgramData\BHoM\Assemblies&quot; /Y" />
-  </Target>
 
 </Project>

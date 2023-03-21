@@ -5,14 +5,8 @@
     <Description>https://github.com/BHoM/SQL_Toolkit</Description>
     <FileVersion>6.1.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
-    <Authors>BHoM</Authors>
-    <Copyright>Copyright © https://github.com/BHoM</Copyright>
-    <RootNamespace>BH.Engine.SQL</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <OutputPath>..\Build\</OutputPath>
+    <BaseOutputPath>..\Build\</BaseOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
