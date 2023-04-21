@@ -22,11 +22,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BH.Engine.Base;
+
+#if ZCTDEPLOY
+using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace BH.Adapter.SQL
 {
@@ -38,7 +43,13 @@ namespace BH.Adapter.SQL
 
         public SqlAdapter(string server, string database)
         {
+            bool hello = false;
+#if ZCTDEPLOY
+            m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True; TrustServerCertificate=True";
+#else
             m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True;";
+#endif
+
             Initialise();
         }
 

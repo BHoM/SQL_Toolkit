@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using BH.Engine.SQL;
 using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
@@ -33,6 +32,12 @@ using BH.oM.Base;
 using BH.Engine.Base;
 
 using System.Data;
+
+#if ZCTDEPLOY
+using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace BH.Adapter.SQL
 {

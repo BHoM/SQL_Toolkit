@@ -26,11 +26,16 @@ using System.Linq;
 using BH.oM.Base;
 using BH.oM.Data.Requests;
 using BH.oM.Adapter;
-using System.Data.SqlClient;
 using BH.oM.Adapters.SQL;
 using BH.Engine.SQL;
 using System.Data;
 using System.Reflection;
+
+#if ZCTDEPLOY
+using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace BH.Adapter.SQL
 {

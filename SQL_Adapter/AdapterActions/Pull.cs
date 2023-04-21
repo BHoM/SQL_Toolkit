@@ -25,9 +25,14 @@ using System.Collections.Generic;
 using System.Linq;
 using BH.oM.Data.Requests;
 using BH.oM.Adapter;
-using System.Data.SqlClient;
 using BH.oM.Adapters.SQL;
 using BH.Engine.SQL;
+
+#if ZCTDEPLOY
+using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace BH.Adapter.SQL
 {
