@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <Description>https://github.com/BHoM/SQL_Toolkit</Description>
     <Version>5.0.0</Version>
@@ -9,10 +8,17 @@
     <Copyright>Copyright © https://github.com/BHoM</Copyright>
     <RootNamespace>BH.oM.SQL</RootNamespace>
     <FileVersion>6.1.0.0</FileVersion>
+    <Configurations>Debug;Release;ZeroCodeTool</Configurations>
+    <OutputPath>..\Build\</OutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\Build\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
+    <TargetFramework>net472</TargetFramework>
+    <DefineConstants>INSTALLERDEPLOY</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='ZeroCodeTool'">
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>ZCTDEPLOY</DefineConstants>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
