@@ -1,32 +1,39 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1382
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL_Adapter", "SQL_Adapter\SQL_Adapter.csproj", "{4D861E16-CEEC-4953-8F6A-1708D8167329}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQL_Adapter", "SQL_Adapter\SQL_Adapter.csproj", "{4D861E16-CEEC-4953-8F6A-1708D8167329}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL_oM", "SQL_oM\SQL_oM.csproj", "{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQL_oM", "SQL_oM\SQL_oM.csproj", "{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQL_Engine", "SQL_Engine\SQL_Engine.csproj", "{089E0C4A-E022-4DAE-868D-B46F0DE06074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQL_Engine", "SQL_Engine\SQL_Engine.csproj", "{089E0C4A-E022-4DAE-868D-B46F0DE06074}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		ZeroCodeTool|Any CPU = ZeroCodeTool|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4D861E16-CEEC-4953-8F6A-1708D8167329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D861E16-CEEC-4953-8F6A-1708D8167329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D861E16-CEEC-4953-8F6A-1708D8167329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D861E16-CEEC-4953-8F6A-1708D8167329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D861E16-CEEC-4953-8F6A-1708D8167329}.ZeroCodeTool|Any CPU.ActiveCfg = ZeroCodeTool|Any CPU
+		{4D861E16-CEEC-4953-8F6A-1708D8167329}.ZeroCodeTool|Any CPU.Build.0 = ZeroCodeTool|Any CPU
 		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.ZeroCodeTool|Any CPU.ActiveCfg = ZeroCodeTool|Any CPU
+		{0A6A3DBF-220B-4C64-8CE5-3E0DDC479404}.ZeroCodeTool|Any CPU.Build.0 = ZeroCodeTool|Any CPU
 		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.ZeroCodeTool|Any CPU.ActiveCfg = ZeroCodeTool|Any CPU
+		{089E0C4A-E022-4DAE-868D-B46F0DE06074}.ZeroCodeTool|Any CPU.Build.0 = ZeroCodeTool|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
