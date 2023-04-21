@@ -10,6 +10,7 @@
     <FileVersion>6.1.0.0</FileVersion>
     <Configurations>Debug;Release;ZeroCodeTool</Configurations>
     <OutputPath>..\Build\</OutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
