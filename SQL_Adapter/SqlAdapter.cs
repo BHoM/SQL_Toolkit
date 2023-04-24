@@ -43,7 +43,6 @@ namespace BH.Adapter.SQL
 
         public SqlAdapter(string server, string database)
         {
-            bool hello = false;
 #if ZCTDEPLOY
             m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True; TrustServerCertificate=True";
 #else
