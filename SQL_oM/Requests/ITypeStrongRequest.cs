@@ -21,12 +21,13 @@
  */
 
 using BH.oM.Adapter;
+using BH.oM.Base;
 using BH.oM.Data.Requests;
 using System;
 
 namespace BH.oM.Adapters.SQL
 {
-    public interface ITypeStrongRequest
+    public interface ITypeStrongRequest : IObject
     {
         /***************************************************/
         /**** Properties                                ****/
@@ -37,7 +38,3 @@ namespace BH.oM.Adapters.SQL
         /***************************************************/
     }
 }
-
-
-
-
