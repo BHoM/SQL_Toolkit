@@ -15,7 +15,7 @@
     <tags>BHoM interop sql aec</tags>
     <title></title>
     <dependencies>
-      <group targetFramework=".NetStandard2.0">
+      <group targetFramework="netstandard2.0">
         <dependency id="Microsoft.Data.SqlClient" version="5.1.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version = "3.1.32" />
         <dependency id="NETStandard.Library" version="2.0.3" />
