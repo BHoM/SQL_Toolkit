@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>BHoM.Interop.SQL</id>
+    <version></version>
+    <authors>BHoM</authors>
+    <projectUrl>https://github.com/BHoM/SQL_Toolkit</projectUrl>
+    <license type="file">licence.txt</license>
+    <icon>icon.png</icon>
+    <readme>readme.md</readme>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Interoperability with SQL databases provided by the SQL_Toolkit of the Building and Habitats object Model (BHoM) - more information available at https://github.com/BHoM/SQL_Toolkit</description>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <tags>BHoM interop sql aec</tags>
+    <title></title>
+    <dependencies>
+      <group targetFramework=".NetStandard2.0">
+        <dependency id="Microsoft.Data.SqlClient" version="5.1.1" />
+        <dependency id="Microsoft.EntityFrameworkCore" version = "3.1.32" />
+        <dependency id="NETStandard.Library" version="2.0.3" />
+        <dependency id="Microsoft.CSharp" version="4.7.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="licence/licence.txt" target="" />
+    <file src="images/icon.png" target="" />
+    <file src="docs/readme.md" target="" />
+  </files>
+</package>
