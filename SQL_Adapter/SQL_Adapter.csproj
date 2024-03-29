@@ -7,7 +7,7 @@
     <Authors>BHoM</Authors>
     <Copyright>Copyright © https://github.com/BHoM</Copyright>
     <RootNamespace>BH.Adapter.SQL</RootNamespace>
-    <FileVersion>7.1.0.0</FileVersion>
+    <FileVersion>7.2.0.0</FileVersion>
     <Configurations>Debug;Release;ZeroCodeTool</Configurations>
     <OutputPath>..\Build\</OutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
