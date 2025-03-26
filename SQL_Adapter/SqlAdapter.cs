@@ -100,14 +100,21 @@ namespace BH.Adapter.SQL
 
         private void Initialise()
         {
-            using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+            try
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+                {
+                    connection.Open();
 
-                // Grab the defined types from the _tableTypes table if it exists in the database
-                GrabTableTypes(connection);
+                    // Grab the defined types from the _tableTypes table if it exists in the database
+                    GrabTableTypes(connection);
 
-                connection.Close();
+                    connection.Close();
+                }
+            }
+            catch (PlatformNotSupportedException ex)
+            {
+                BH.Engine.Base.Compute.RecordError("SQL is not supported in this UI. Please use Grasshopper in Rhino 7 or Excel.");
             }
         }
 
