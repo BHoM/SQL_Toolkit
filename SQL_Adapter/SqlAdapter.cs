@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -100,14 +100,21 @@ namespace BH.Adapter.SQL
 
         private void Initialise()
         {
-            using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+            try
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(m_ConnectionString))
+                {
+                    connection.Open();
 
-                // Grab the defined types from the _tableTypes table if it exists in the database
-                GrabTableTypes(connection);
+                    // Grab the defined types from the _tableTypes table if it exists in the database
+                    GrabTableTypes(connection);
 
-                connection.Close();
+                    connection.Close();
+                }
+            }
+            catch (PlatformNotSupportedException ex)
+            {
+                BH.Engine.Base.Compute.RecordError("SQL is not supported in this UI. Please use Grasshopper in Rhino 7 or Excel.");
             }
         }
 
@@ -192,6 +199,7 @@ namespace BH.Adapter.SQL
         /***************************************************/
     }
 }
+
 
 
 
