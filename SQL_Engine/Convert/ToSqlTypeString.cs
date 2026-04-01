@@ -22,9 +22,11 @@
 
 using BH.oM.Adapters.SQL;
 using BH.oM.Base;
+using BH.oM.Base.Attributes;
 using BH.oM.Data.Requests;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -39,6 +41,9 @@ namespace BH.Engine.SQL
         /**** Public Methods                            ****/
         /***************************************************/
 
+        [Description("Returns the SQL type string equivalent for the given .NET type, mapping primitives, enums, strings, Guids, and DateTimes to their corresponding SQL types.")]
+        [Input("type", "The .NET type to convert to a SQL type string.")]
+        [Output("sqlType", "The SQL type string corresponding to the given .NET type.")]
         public static string ToSqlTypeString(this Type type)
         {
             // TODO: This is just prototype code for when we enable creation of tables from the adapter
