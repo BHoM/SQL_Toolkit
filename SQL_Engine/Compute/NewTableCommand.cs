@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -22,8 +22,10 @@
 
 using BH.Engine.Base;
 using BH.oM.Base;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -37,6 +39,10 @@ namespace BH.Engine.SQL
         /**** Public Methods                            ****/
         /***************************************************/
 
+        [Description("Creates a SQL CREATE TABLE command string for the given object type, using its primitive, enum, string, Guid, and DateTime properties as columns.")]
+        [Input("objectType", "The type from which to derive the SQL table columns.")] 
+        [Input("tableName", "The name for the SQL table. Defaults to the type name if not provided or empty.")]
+        [Output("command", "SQL CREATE TABLE command string for the given type.")]
         public static string NewTableCommand(this Type objectType, string tableName = "")
         {
             if (objectType == null)
@@ -72,6 +78,7 @@ namespace BH.Engine.SQL
         /***************************************************/
     }
 }
+
 
 
 

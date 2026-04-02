@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -23,9 +23,11 @@
 using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
 using BH.oM.Base;
+using BH.oM.Base.Attributes;
 using BH.oM.Data.Requests;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -39,6 +41,9 @@ namespace BH.Engine.SQL
         /**** Interface Methods                         ****/
         /***************************************************/
 
+        [Description("Converts an IRequest to its corresponding SQL command string.")]
+        [Input("request", "The request to convert to a SQL command string.")]
+        [Output("command", "SQL command string corresponding to the given request.")]
         public static string IToSqlCommand(this IRequest request)
         {
             return ToSqlCommand(request as dynamic);
@@ -46,6 +51,9 @@ namespace BH.Engine.SQL
 
         /***************************************************/
 
+        [Description("Converts an IExecuteCommand to its corresponding SQL command string.")]
+        [Input("request", "The execute command to convert to a SQL command string.")]
+        [Output("command", "SQL command string corresponding to the given execute command.")]
         public static string IToSqlCommand(this IExecuteCommand request)
         {
             return ToSqlCommand(request as dynamic);
@@ -56,6 +64,9 @@ namespace BH.Engine.SQL
         /**** Request Methods                           ****/
         /***************************************************/
 
+        [Description("Converts a TableRequest to a SQL SELECT command string, optionally filtering columns and rows.")]
+        [Input("request", "The table request specifying the table, columns, and filter to query.")]
+        [Output("command", "SQL SELECT command string for the given table request.")]
         public static string ToSqlCommand(this TableRequest request)
         {
             string select = "*";
@@ -71,6 +82,9 @@ namespace BH.Engine.SQL
 
         /***************************************************/
 
+        [Description("Converts a CustomRequest to a SQL command string by returning its Query property directly.")]
+        [Input("request", "The custom request containing a raw SQL query string.")]
+        [Output("command", "SQL command string from the custom request's Query property.")]
         public static string ToSqlCommand(this oM.Adapters.SQL.CustomRequest request)
         {
             return request.Query;
@@ -81,6 +95,9 @@ namespace BH.Engine.SQL
         /**** Command Methods                           ****/
         /***************************************************/
 
+        [Description("Converts an UpdateCommand to a SQL UPDATE command string, applying the specified field changes and optional filter.")]
+        [Input("command", "The update command specifying the table, field changes, and optional filter condition.")]
+        [Output("command", "SQL UPDATE command string for the given update command.")]
         public static string ToSqlCommand(this UpdateCommand command)
         {
             string where = "";
@@ -114,6 +131,7 @@ namespace BH.Engine.SQL
         /***************************************************/
     }
 }
+
 
 
 

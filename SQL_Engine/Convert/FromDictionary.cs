@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -20,14 +20,16 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
  */
 
+using BH.Engine.Base;
 using BH.oM.Base;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using BH.Engine.Base;
 
 namespace BH.Engine.SQL
 {
@@ -37,6 +39,10 @@ namespace BH.Engine.SQL
         /**** Public Methods                            ****/
         /***************************************************/
 
+        [Description("Creates an object instance from a dictionary of property name-value pairs. The target type is inferred from the _t key in the dictionary if not provided or abstract.")]
+        [Input("dic", "Dictionary mapping property names to their values. Keys starting with _ are stored as CustomData on BHoMObjects.")]
+        [Input("type", "The type of object to create. If null or abstract, the type is resolved from the _t key in the dictionary.")]
+        [Output("obj", "An object instance populated with values from the dictionary.")]
         public static object FromDictionary(this Dictionary<string, object> dic, Type type = null)
         {
             if ((type == null || type.IsAbstract) && dic.ContainsKey("_t"))
@@ -68,6 +74,7 @@ namespace BH.Engine.SQL
         /***************************************************/
     }
 }
+
 
 
 
