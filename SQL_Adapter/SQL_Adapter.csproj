@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net7.0</TargetFrameworks>
     <DefineConstants>INSTALLERDEPLOY</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='ZeroCodeTool'">
@@ -28,8 +28,25 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
-    <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot;  &quot;$(ProgramData)\BHoM\Assemblies&quot; /Y" />
+    <!-- net472: netfx subdirectory -->
+    <Exec Condition="'$(TargetFramework)'=='net472'"
+          Command="if not exist &quot;$(ProgramData)\BHoM\Assemblies\netfx\&quot; mkdir &quot;$(ProgramData)\BHoM\Assemblies\netfx&quot;" />
+    <Exec Condition="'$(TargetFramework)'=='net472'"
+          Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies\netfx\&quot; /Y" />
+    <!-- net7.0: SQL_Adapter.dll + Microsoft.Data.SqlClient.dll → net7.0 subdirectory -->
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="if not exist &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; mkdir &quot;$(ProgramData)\BHoM\Assemblies\net7.0&quot;" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="xcopy &quot;$(TargetDir)Microsoft.Data.SqlClient.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+	<Exec Condition="'$(TargetFramework)'=='net7.0'"
+		Command="xcopy &quot;$(TargetDir)$(TargetName).deps.json&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
   </Target>
 
   <ItemGroup>
@@ -65,7 +82,7 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
+  <ItemGroup Condition="('$(Configuration)'=='Debug' Or '$(Configuration)'=='Release') And '$(TargetFramework)'=='net472'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
