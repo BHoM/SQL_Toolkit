@@ -46,7 +46,9 @@
     <Exec Condition="'$(TargetFramework)'=='net7.0'"
           Command="xcopy &quot;$(TargetDir)Microsoft.Data.SqlClient.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
 	<Exec Condition="'$(TargetFramework)'=='net7.0'"
-		Command="xcopy &quot;$(TargetDir)$(TargetName).deps.json&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+		Command="if not exist &quot;$(ProgramData)\BHoM\Settings\&quot; mkdir &quot;$(ProgramData)\BHoM\Settings\&quot; /Y" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+		  Command="xcopy &quot;$(ProjectDir)Settings\SqlClientAssemblyFix.json&quot; &quot;$(ProgramData)\BHoM\Settings\&quot; /Y" />
   </Target>
 
   <ItemGroup>
