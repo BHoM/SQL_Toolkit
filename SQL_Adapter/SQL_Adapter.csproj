@@ -44,7 +44,9 @@
     <Exec Condition="'$(TargetFramework)'=='net7.0'"
           Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
     <Exec Condition="'$(TargetFramework)'=='net7.0'"
-          Command="xcopy &quot;$(TargetDir)Microsoft.Data.SqlClient.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+          Command="xcopy &quot;$(TargetDir)runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+	  <Exec Condition="'$(TargetFramework)'=='net7.0'"
+			Command="xcopy &quot;$(TargetDir)runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
 	<Exec Condition="'$(TargetFramework)'=='net7.0'"
 		Command="if not exist &quot;$(ProgramData)\BHoM\Settings\&quot; mkdir &quot;$(ProgramData)\BHoM\Settings\&quot; /Y" />
     <Exec Condition="'$(TargetFramework)'=='net7.0'"
