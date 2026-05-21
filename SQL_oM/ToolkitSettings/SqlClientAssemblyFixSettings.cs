@@ -30,7 +30,7 @@ namespace BH.oM.Adapters.SQL
 {
     [Description("Initialisation settings for the SQL Toolkit ensuring that the correct Microsoft.Data.SqlClient assembly " +
                  "is loaded before any SQL component is used in Rhino 8. This is a fix until McNeel ships a working version of that dll.")]
-    public class SqlClientAssemblyFixSetting : BHoMObject, ISettings, IInitialisationSettings
+    public class SqlClientAssemblyFixSettings : BHoMObject, ISettings, IInitialisationSettings
     {
         /***************************************************/
         /**** Properties                                ****/
