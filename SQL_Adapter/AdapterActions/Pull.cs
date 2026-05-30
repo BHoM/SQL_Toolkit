@@ -28,7 +28,7 @@ using BH.oM.Adapter;
 using BH.oM.Adapters.SQL;
 using BH.Engine.SQL;
 
-#if ZCTDEPLOY
+#if ZCTDEPLOY || NET7_0_OR_GREATER
 using Microsoft.Data.SqlClient;
 #else
 using System.Data.SqlClient;
