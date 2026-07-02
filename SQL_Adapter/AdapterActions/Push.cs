@@ -31,7 +31,7 @@ using BH.Engine.SQL;
 using System.Data;
 using System.Reflection;
 
-#if ZCTDEPLOY
+#if ZCTDEPLOY || NET7_0_OR_GREATER
 using Microsoft.Data.SqlClient;
 #else
 using System.Data.SqlClient;

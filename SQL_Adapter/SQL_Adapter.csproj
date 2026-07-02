@@ -7,14 +7,14 @@
     <Authors>BHoM</Authors>
     <Copyright>Copyright © https://github.com/BHoM</Copyright>
     <RootNamespace>BH.Adapter.SQL</RootNamespace>
-    <FileVersion>9.1.0.0</FileVersion>
+    <FileVersion>9.2.0.0</FileVersion>
     <Configurations>Debug;Release;ZeroCodeTool</Configurations>
     <OutputPath>..\Build\</OutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net7.0</TargetFrameworks>
     <DefineConstants>INSTALLERDEPLOY</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='ZeroCodeTool'">
@@ -25,11 +25,35 @@
   <ItemGroup Condition="'$(Configuration)'=='ZeroCodeTool'">
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
-    <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot;  &quot;$(ProgramData)\BHoM\Assemblies&quot; /Y" />
+    <!-- net472: netfx subdirectory -->
+    <Exec Condition="'$(TargetFramework)'=='net472'"
+          Command="if not exist &quot;$(ProgramData)\BHoM\Assemblies\netfx\&quot; mkdir &quot;$(ProgramData)\BHoM\Assemblies\netfx&quot;" />
+    <Exec Condition="'$(TargetFramework)'=='net472'"
+          Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies\netfx\&quot; /Y" />
+	  <!-- backward compatibility: root Assemblies subdirectory -->
+	<Exec Condition="'$(TargetFramework)'=='net472'"
+	      Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies&quot; /Y" />
+    <!-- net7.0: SQL_Adapter.dll + Microsoft.Data.SqlClient.dll → net7.0 subdirectory -->
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="if not exist &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; mkdir &quot;$(ProgramData)\BHoM\Assemblies\net7.0&quot;" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+          Command="xcopy &quot;$(TargetDir)runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+	  <Exec Condition="'$(TargetFramework)'=='net7.0'"
+			Command="xcopy &quot;$(TargetDir)runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll&quot; &quot;$(ProgramData)\BHoM\Assemblies\net7.0\&quot; /Y" />
+	<Exec Condition="'$(TargetFramework)'=='net7.0'"
+		Command="if not exist &quot;$(ProgramData)\BHoM\Settings\&quot; mkdir &quot;$(ProgramData)\BHoM\Settings\&quot; /Y" />
+    <Exec Condition="'$(TargetFramework)'=='net7.0'"
+		  Command="xcopy &quot;$(ProjectDir)Settings\SqlClientAssemblyFix.json&quot; &quot;$(ProgramData)\BHoM\Settings\&quot; /Y" />
   </Target>
 
   <ItemGroup>
@@ -65,7 +89,7 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
+  <ItemGroup Condition="('$(Configuration)'=='Debug' Or '$(Configuration)'=='Release') And '$(TargetFramework)'=='net472'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

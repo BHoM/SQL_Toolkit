@@ -27,7 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BH.Engine.Base;
 
-#if ZCTDEPLOY
+#if ZCTDEPLOY || NET7_0_OR_GREATER
 using Microsoft.Data.SqlClient;
 #else
 using System.Data.SqlClient;
@@ -38,12 +38,28 @@ namespace BH.Adapter.SQL
     public partial class SqlAdapter : BHoMAdapter
     {
         /***************************************************/
+        /**** Static Constructor                        ****/
+        /***************************************************/
+
+#if NET7_0_OR_GREATER
+        static SqlAdapter()
+        {
+            // Use managed TCP sockets instead of the native SNI DLL.
+            // Required on CoreCLR hosts (Rhino 8) where the native SNI library is not on
+            // the DLL search path. Effective only on actual .NET 7+ processes — ignored
+            // when a net472 build runs under CoreCLR compat mode, which is why this
+            // switch must live in the net7.0-targeted build, not the net472 build.
+            AppContext.SetSwitch("Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows", true);
+        }
+#endif
+
+        /***************************************************/
         /**** Constructors                              ****/
         /***************************************************/
 
         public SqlAdapter(string server, string database)
         {
-#if ZCTDEPLOY
+#if ZCTDEPLOY || NET7_0_OR_GREATER
             m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True; TrustServerCertificate=True";
 #else
             m_ConnectionString = $"Server = {server}; Database = {database}; Trusted_Connection = True;";
@@ -112,9 +128,9 @@ namespace BH.Adapter.SQL
                     connection.Close();
                 }
             }
-            catch (PlatformNotSupportedException ex)
+            catch (Exception ex)
             {
-                BH.Engine.Base.Compute.RecordError("SQL is not supported in this UI. Please use Grasshopper in Rhino 7 or Excel.");
+                BH.Engine.Base.Compute.RecordError($"Failed to connect to SQL Server: {ex.Message}");
             }
         }
 
